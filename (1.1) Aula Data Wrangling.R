@@ -113,14 +113,12 @@ nova_base_pipe <- nova_base %>% rename(obs = observacoes,
                                        perf = perfil)
 
 # Note que um novo objeto foi criado no ambiente do R
-
 head(nova_base_pipe, n=5)
 
 rm(nova_base_pipe) # Remove o objeto especificado do ambiente
 
 # Também é possível utilizar a função "rename" com base na posição da variável
 # Em datasets com muitas variáveis, esta função facilita a escrita do código
-
 nova_base %>% rename(obs = 1,
                      temp = 2,
                      dist = 3,
@@ -129,7 +127,6 @@ nova_base %>% rename(obs = 1,
                      perf = 6)
 
 # É possível alterar apenas uma ou outra variável:
-
 nova_base %>% rename(sem = 4,
                      perf = 6)
 
@@ -141,7 +138,6 @@ nova_base %>% rename(sem = 4,
 
 # Numa primeira situação, são adicionados duas variáveis a um dataset existente 
 # As observações no dataset e nas variáveis devem estar igualmente ordenadas
-
 variavel_nova_1 <- c(1,2,3,4,5,6,7,8,9,10)
 variavel_nova_2 <- c(11:20)
 print(variavel_nova_1)
@@ -154,7 +150,6 @@ View(base_inclui)
 
 # Podemos utilizar o operador %>% para criar uma nova base (como antes)
 # E, no mesmo código, vamos inserir as duas "variáveis novas"
-
 nova_base %>% rename(obs = observacoes,
                      temp = tempo,
                      dist = distancia,
@@ -185,7 +180,6 @@ nova_base %>% rename(obs = observacoes,
 # A função "mutate" também pode tranformar as variáveis já existentes
 # Vamos supor que gostaríamos de tranformar a variável "semáforos" em texto
 # Para isto, podemos utilizar a função "replace":
-
 base_texto_1 <- mutate(nova_base, 
                        semaforos = replace(semaforos, semaforos==0, "Zero"),
                        semaforos = replace(semaforos, semaforos==1, "Um"),
@@ -196,7 +190,6 @@ head(base_texto_1)
 
 # Em conjunto com o mutate, também pode ser utilizada a função "recode"
 # A seguir, trocaremos um texto por outro texto e criaremos uma nova variável:
-
 base_texto_2 <- mutate(nova_base, 
                        perfil_novo = recode(perfil,
                                             "calmo"="perfil 1",
@@ -208,7 +201,6 @@ head(base_texto_2)
 # Poderíamos manter na variável original (ao invés de criar "perfil_novo")
 
 # Vamos utizar o "recode" para transformar um texto em valores:
-
 base_texto_valores <- mutate(nova_base,
                              periodo = recode(periodo,
                                               "Manhã"=0,
@@ -218,7 +210,6 @@ head(base_texto_valores)
 
 # Um código semelhante poderia ser utilizado para gerar dummies:
 # Observação: há códigos mais simples para gerar dummies, este é para praticar
-
 base_dummy <- mutate(nova_base, perfil_agressivo = recode(perfil,
                                                           "agressivo"=1,
                                                           "moderado"=0,
@@ -238,13 +229,11 @@ View(base_dummy)
 
 # Função "transmute": inclui variáveis no dataset, excluindo as existentes
 # Depois de informar o dataset, informe as variáveis mantidas e adicionadas
-
 base_exclui <- transmute(nova_base,
                          observacoes, tempo,
                          variavel_nova_1, variavel_nova_2)
 
 # Podemos praticar um pouco mais com o pipe
-
 base_exclui_rename <- nova_base %>% transmute(observacoes, tempo,
                                                 variavel_nova_1) %>% 
                       mutate(tempo_novo = recode(tempo,
@@ -263,7 +252,6 @@ base_exclui_rename <- nova_base %>% transmute(observacoes, tempo,
                                              "maiores")))
 
 # Para referência do cálculo, a mediana da amostra:
-
 median(nova_base$tempo)
 
 # Utilizamos o comando "cut", que converte uma variável de valores em intervalos
@@ -282,40 +270,36 @@ selecao_2 <- nova_base[,1:3] # selecionando pela posição das colunas de 1 a 3
 
 # É possível selecionar parte do dataset (incluindo a seleção de linhas):
 # Linhas antes da vírgula, colunas após a vírgula
-
 extrai_parte_1 <- nova_base[3:7, c("observacoes", "perfil")]
 extrai_parte_2 <- nova_base[3:7, 1:2]
 
 # Função "select" utilizada para selecionar e manter variáveis no dataset
 # Portanto, seleciona as variáveis que devem ficar no dataset
-
 base_select_1 <- select(nova_base, observacoes, tempo) # especificando
 base_select_2 <- select(nova_base,  everything(), -perfil) # todas menos uma
 base_select_3 <- select(nova_base, observacoes:distancia) # de uma a outra
 base_select_4 <- select(nova_base, starts_with("p")) # para algum prefixo comum
 
 # Reposicionar variáveis do dataset com "select"
-
 nova_base %>% select(observacoes, perfil, everything())
 
-# O mesmo trabalho poderia ser feito com a função "relocate"
 
+# O mesmo trabalho poderia ser feito com a função "relocate"
 nova_base %>% relocate(perfil, .after = observacoes)
 nova_base %>% relocate(perfil, .before = tempo)
 
-# A seguir, com "select", informaremos a ordem (inclusive, excluindo variáveis)
 
+# A seguir, com "select", informaremos a ordem (inclusive, excluindo variáveis)
 nova_base %>% select(tempo, semaforos, perfil, observacoes)
 
 # A função "pull" executa trabalho semelhante ao "select", porém gera um vetor
-
 vetor_pull <- nova_base %>% pull(var = 3)
+
 
 #--------------------Summarise--------------------------------------------------
 
 # Função "summarise": função que resume o dataset, podendo criar outros
 # No primeiro caso, abaixo, todas as observações são resumidas em descritivas
-
 descritivas_nova_base <- summarise(nova_base,
                                    observações=n(),
                                    média=mean(tempo),
@@ -334,7 +318,6 @@ print(descritivas_nova_base)
 # A seguir, vamos agrupar as informações do dataset pelo critério de "período"
 
 base_grupo <- group_by(nova_base, periodo)
-
 # Aparentemente, nada mudou na "base_grupo" em relação à "nova_base"
 
 View(base_grupo)
