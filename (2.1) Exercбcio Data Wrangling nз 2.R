@@ -19,7 +19,6 @@ dim(base_covid)
 names(base_covid)
 
 # Os nomes estão ruins, vamos alterar e simplificar os nomes das variáveis:
-
 base_covid <- base_covid %>% rename(nome = 1,
                                     regiao = 2,
                                     casos_total = 3,
@@ -45,18 +44,15 @@ names(base_covid)
 table(base_covid$tipo_transmissao)
 
 # ou também poderia ser feito:
-
 unique(base_covid$tipo_transmissao)
 
 # Em uma rápida análise dos países, vemos que há "Global" e "Other"
 # Antes de criar categorias para "casos_relativo", vamos excluí-los do dataset
-
 base_covid <- base_covid[-c(1),] # excluída pelo número de sua linha
 base_covid <- base_covid[!(base_covid$nome=="Other"),] # excluída por seu nome
 
 # Podemos trocar os nomes de "tipo_transimssao" com o "mutate" e "recode"
 # Podemos criar a nova categoria para "casos_relativo" com "mutate" e "cut"
-
 base_covid <- base_covid %>% mutate(tipo_transmissao = recode(tipo_transmissao,
                                                               "Clusters of cases" = "Casos Concentrados",
                                                               "Community transmission" = "Transmissão Comunitária",
@@ -76,12 +72,10 @@ base_covid <- base_covid %>% mutate(tipo_transmissao = recode(tipo_transmissao,
 
 # Neste caso, a função cut foi aprimorada em relação ao exemplo da aula
 # Aqui, geramos as categorias com base nos quartis da variável original
-
 table(base_covid$grupos)
 
 # Vamos excluir a variável "mortes_dia", pois não vamos utilizar
 # Ao mesmo tempo, vamos trazer a variável "grupos" para o começo do dataset
-
 base_covid <- base_covid %>% select(nome, 
                                     regiao,
                                     grupos,
@@ -91,32 +85,31 @@ base_covid <- base_covid %>% select(nome,
 # Em seguida, vamos agrupar o dataset com base na variável "grupos"
 # Vamos criar um dataset com informações de resumo (média, desvio padrão, ...)
 # No final, realizar o ungroup para manter o dataset na estrutura original
-
 base_quartis <- base_covid %>% group_by(grupos) %>% 
   summarise(média=mean(casos_relativo, na.rm = T),
             desvio_padrão=sd(casos_relativo, na.rm = T),
             obs.=n()) %>%
   ungroup () %>% droplevels(.)
 
-# Como já fizemos o ungroup acima, poderíamos realizar uma análise diferente:
 
+# Como já fizemos o ungroup acima, poderíamos realizar uma análise diferente:
+# Análise por região
 base_regiao <- base_covid %>% group_by(regiao) %>% 
   summarise(média=mean(casos_relativo, na.rm = T),
             desvio_padrão=sd(casos_relativo, na.rm = T),
             obs.=n()) %>%
   ungroup () %>% droplevels(.)
 
+
 # Vamos adicionar duas novas variáveis ao dataset utilizando a função "join"
 # As variáveis estão na planilha em Excel WBD Pib per Capita
 # Vamos trazer "income group" e "PIB em 2019" utilizando "right join"
-
 library(readxl)
 
 PIB2019 <- read_excel("(2.3) WBD PIB per Capita.xls")
 
 # A chave para o merge é o nome do país, mas é necessária a alteração no nome
 # Vamos aproveitar o mesmo código e fazer algumas alterações adicionais
-
 base_covid_2 <- PIB2019 %>% rename(nome="Country Name") %>%
   right_join(base_covid, by = "nome") %>% 
   select(everything(), -`Country Code`) %>% 
@@ -127,24 +120,26 @@ base_covid_2 <- PIB2019 %>% rename(nome="Country Name") %>%
                               "Lower middle income" = "PIB Baixo",
                               "Low income" = "PIB Muito Baixo"))
 
+
 # Como é um "right join", levamos as variáveis do PIB2019 para a base_covid
 # Portanto, a base_covid_2 contém as mesmas observações da base_covid
 # Note que surgem os NAs nos casos não identificados
 
 # Vamos analisar com base na nova variável adicionada pelo merge
-
 base_renda <- base_covid_2 %>% group_by(grupo_renda) %>% 
   summarise(média=mean(casos_relativo, na.rm = T),
             desvio_padrão=sd(casos_relativo, na.rm = T),
             obs.=n()) %>%
   ungroup () %>% droplevels(.)
 
-# Ou mesmo um gráfico para ilustrar por imagem:
+library('ggplot2')
 
+# Ou mesmo um gráfico para ilustrar por imagem:
 base_covid_2 %>% group_by(grupo_renda) %>% 
   summarise(média=mean(casos_relativo, na.rm = T),
             desvio_padrão=sd(casos_relativo, na.rm = T),
-            obs.=n()) %>% ungroup () %>% droplevels(.) %>% 
+            obs.=n()) %>% 
+  ungroup () %>% droplevels(.) %>% 
   ggplot() + 
   geom_col(aes(x=grupo_renda, y=média), fill="orange") + 
   labs(x = "Grupo de Renda",

@@ -1,5 +1,5 @@
 # Configura workdirectory path
-setwd("~/Documents/USP_ESALQ/DATA_WRANGLING")
+setwd("~/Documentos/USP - ESALQ - POS-GRADUACAO/CODIGOS/Data_Wrangling_R_4_Data_Science")
 
 # Data Wrangling R
 
@@ -36,14 +36,21 @@ dataset_merge <- read_excel("(1.3) Dataset Aula Data Wrangling (Join).xls")
 View(dataset_inicial) # Mostra a base de dados completa em uma nova aba
 head(dataset_inicial, n=5) # Mostra as 5 primeiras observações da base de dados
 str(dataset_inicial) # Mostra a estrutura da base de dados
+
+#---------------------------------------------------------
+
+library(dplyr)
 glimpse(dataset_inicial) # Função parecida com a str
+
+#-------------------------------------------------------
+
+
 print(dataset_inicial) # Apresenta a base de dados no console
 dim(dataset_inicial) # As dimensões do dataset: linhas e colunas, respectivamente
 names(dataset_inicial) # Para ver os nomes das variáveis
 
 # Poderíamos fazer o print de apenas uma variável
 # O símbolo "$" é utilizado para especificar uma variável do dataset
-
 dataset_inicial$`Tempo para chegar à escola (minutos)`
 
 # Relembrando algumas definições sobre as variáveis:
@@ -73,14 +80,12 @@ novos_nomes <- c("Observações",
 print(novos_nomes)
 
 # 2º: Em seguida, atribuimos o vetor com nomes ao dataset
-
 names(dataset_inicial) <- novos_nomes
 
 head(dataset_inicial, n=5)
 
 # A função "rename" torna este trabalho mais prático
 # A seguir, o argumento da função é: novo nome = nome antigo
-
 nova_base <- rename(dataset_inicial, 
                     observacoes = Observações,
                     tempo = "Tempo para chegar",
@@ -95,7 +100,6 @@ head(nova_base, n=5)
 # Trata-se do uso do operador pipe - %>% - atalho: Ctrl+Shift+M
 # Com ele, tiramos o primeiro argumento do código
 # É muito útil para realizar diversas funções em sequência
-
 nova_base %>% rename(obs = observacoes,
                      temp = tempo,
                      dist = distancia,
@@ -104,7 +108,6 @@ nova_base %>% rename(obs = observacoes,
                      perf = perfil) 
 
 # No código acima, não criamos um novo objeto, mas poderíamos criar:
-
 nova_base_pipe <- nova_base %>% rename(obs = observacoes,
                                        temp = tempo,
                                        dist = distancia,

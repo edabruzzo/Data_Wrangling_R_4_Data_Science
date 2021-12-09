@@ -5,7 +5,7 @@
 # Fonte: https://www.kaggle.com/datasets, enviados por Ruchi Bhatia
 
 filmes <- read.csv("(6.2) Filmes Streaming.csv")
-series <- read.csv("(6.3) Séries Streaming.csv")
+series <- read.csv("(6.3) SВries Streaming.csv")
 
 library(tidyverse)
 
@@ -13,9 +13,8 @@ glimpse(filmes)
 glimpse(series)
 
 # Os dois datasets têm estruturas semelhantes quanto às variáveis
-# Porém, o dataset sobre flimes tem colunas a mais
+# Porém, o dataset sobre filmes tem colunas a mais
 # Vamos fazer uma rápida organização dos datasets e juntá-los
-
 completo <- filmes %>% select(everything(), -(Directors:Runtime)) %>% 
                        bind_rows(series) %>% 
                        select(!X)
